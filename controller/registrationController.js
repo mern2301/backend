@@ -23,24 +23,24 @@ async function registrationController(req, res) {
     return res.json({ error: "This email address is in already used" })
   }
 
-  bcrypt.hash(password, 10, async function (err, hash) {
-    const userlist = new UserList({
-      firstName,
-      lastName,
-      email,
-      mobile,
-      presentAddress,
-      permanentAddress,
-      city,
-      postcode,
-      division,
-      district,
-      password: hash
-    })
-    await userlist.save()
-    var token = jwt.sign({ email }, 'mamun');
-    sendEmail(email, 'EMAIL VERIFICATION', emailVerificationTemplate(token))
-  });
+  let hash = await bcrypt.hash(password, 10);
+  const userlist = new UserList({
+    firstName,
+    lastName,
+    email,
+    mobile,
+    presentAddress,
+    permanentAddress,
+    city,
+    postcode,
+    division,
+    district,
+    password: hash
+  })
+  await userlist.save()
+  var token = jwt.sign({ email }, 'mamun');
+  sendEmail(email, 'EMAIL VERIFICATION', emailVerificationTemplate(token))
+
 
   res.json(req.body);
 }
